@@ -1,2 +1,7 @@
 (\x.x y)
 (\a.(\x.(x a) y) w)
+(\a.(\x.x y) w)
+(\y.(\x.x y) z)
+(\a.(\x.(\z.(x (z a)) b) y) w)
+
+(\a.(a (y k)) w)

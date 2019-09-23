@@ -1,5 +1,6 @@
 import PA1Helper
 import System.Environment (getArgs)
+import Data.Map
 
 -- Haskell representation of lambda expression
 -- data Lexp = Atom String | Lambda String Lexp | Apply Lexp  Lexp 
@@ -27,59 +28,48 @@ reducer :: Lexp -> Lexp
 reducer lexp1@(Apply lexp2@(Lambda old exp1) new) = (subst exp1 old new)
 reducer lexp = eta lexp
 
-vars = ['a'..'z']
---foldr'
-foldr' :: (a->b->b) -> b -> [a] -> b
-foldr' _ u []    = u
-foldr' f u (h:t) = f h (foldr' f u t)
 
-{-- Test it with:
+{-
+beta :: Lexp -> Lexp
+beta lexp@(Apply exp1@(Lambda _ _) new) = (sub exp1 new) 
 
-foldr' (+) 0 [1,2,3,4]   -- displays 10
-foldr' (*) 1 [1,2,3,4]   -- displays 24
+sub :: Lexp -> Lexp -> Lexp
+sub lexp@(Lambda old exp) new = (subsub exp old new)
 
---}
+subsub :: Lexp -> String -> Lexp -> Lexp
+subsub v@(Atom var) old new = if var == old then new else v
+subsub lexp@(Apply _ _) old new
+subsub lexp@(Apply _ _) old new = ((beta lexp)) 
 
--- filter' as foldr' application after eta-reduction
-filter' :: (a-> Bool) -> [a] -> [a]
-filter' p = foldr' 
-            (\h t ->  if p h 
-                      then h:t 
-                      else t) []
 
-{-- Test it with:
 
-filter''' (\x -> x < 3) [1,2,3,4]   -- displays [1,2]
 
---}
+-- //////////////////////////////////////////////////////////////////
+beta :: Lexp -> Lexp
+beta lexp@(Apply exp1 new) = (subst exp1 new) 
 
--- remove as filter application
-remove :: (Eq a) => a -> [a] -> [a]
-remove x = filter' (\v -> v/=x)
 
-{-- Test it with:
+subst :: Lexp -> String -> Lexp -> Lexp
+subst v@(Atom var1) old new = if var1 == old then new else v
+subst lexp@(Lambda var1 exp1) old new = (subst exp1 old new)
+subst lexp@(Apply exp1 exp2) old new = (Apply (subst exp1 old new) (subst exp2 old new))
 
-remove 2 [1,2,3,4]
+subbase :: Lexp -> Lexp
 
---}
 
--- remove as filter application using infix notation for /=
-remove' :: (Eq a) => a -> [a] -> [a]
-remove' x = filter' (/=x)
+ 
+subst :: Lexp -> String -> Lexp -> Lexp
+subst v@(Atom var1) old new = if var1 == old then new else v
+subst lexp@(Lambda var1 exp1) old new = (Lambda var1 (subst exp1 old new))
+subst lexp@(Apply exp1 exp2) old new = (Apply (subst exp1 old new) (subst exp2 old new))
 
-{-- Test it with:
 
-remove' 2 [1,2,3,4]
 
---}
-
--- Haskell representation of lambda expression
-
-freevars :: Lexp -> [String]
-freevars (Atom s)            = [s]
-freevars (Lambda v e)        = remove v (freevars e)
-freevars (Apply e1 e2)       = (freevars e1)++(freevars e2)
-
+subst :: Lexp -> Lexp -> Lexp
+subst v@(Atom var1) new = new
+subst lexp@(Lambda var1 exp1) new = (Lambda var1 (subst exp1 new))
+subst lexp@(Apply exp1 exp2) new = (Apply (subst exp1 new) (subst exp2 new))
+-}
 
 subst :: Lexp -> String -> Lexp -> Lexp
 subst v@(Atom var1) old new = if var1 == old then new else v
