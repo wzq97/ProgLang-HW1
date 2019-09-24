@@ -1,1 +1,8 @@
-Error(w (y k))
+\y1.(y1 (y w))
+\y1.((y w) y1)
+y
+y
+(\x1.(x x1) y)
+((\t.\e.((\x.\y.x t) e) x) y)
+(\x.(y x) \x.(z x))
+(\x.\y.(x y) (y w))
