@@ -85,7 +85,7 @@ eta lexp@(Lambda _ _) = lexp
 -- Entry point of program
 main = do
     args <- getArgs
-    let inFile = case args of { x:_ -> x; _ -> "input1.lambda" }
+    let inFile = case args of { x:_ -> x; _ -> "input.lambda" }
     let outFile = case args of { x:y:_ -> y; _ -> "output.lambda"}
     -- id' simply returns its input, so runProgram will result
     -- in printing each lambda expression twice. 
