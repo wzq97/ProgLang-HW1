@@ -18,4 +18,4 @@
 \n.((n x) n)
 \s.(\t.(\u.u t) s)
 (\z.y (\x.(x x) \x.(x x)))
-\n.(n n)
+\n.(\n.n n)
