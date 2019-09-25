@@ -1,8 +1,21 @@
-\y1.(y1 (y w))
-\y1.((y w) y1)
+\x.x
+\y'.(y' (y w))
+(y w)
 y
+(y y)
+x
+(f (f (f x)))
+(f (f (f (f (f (f (f (f (f (f (f (f (f (f (f x)))))))))))))))
+(f (f (f (f (f (f x))))))
+(f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f x))))))))))))))))))))))))))))))))
+(f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f (f x)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+(y z)
+w
+(p \z.z)
+a
+(z z)
+(y w)
+\n.((n x) n)
+\u.u
 y
-(\x1.(x x1) y)
-((\t.\e.((\x.\y.x t) e) x) y)
-(\x.(y x) \x.(z x))
-(\x.\y.(x y) (y w))
+\n.(n n)
