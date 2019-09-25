@@ -1,6 +1,5 @@
 import PA1Helper
 import System.Environment (getArgs)
-import Data.List ( (\\) )
 
 -- Haskell representation of lambda expression
 -- data Lexp = Atom String | Lambda String Lexp | Apply Lexp  Lexp 
@@ -24,18 +23,17 @@ id' lexp@(Apply _ _) = lexp
 -- You will need to write a reducer that does something more than
 -- return whatever it was given, of course!
 
+-- 
 reducer :: Lexp -> Lexp
 reducer lexp@(Atom _) = lexp
-reducer lexp@(Apply (Lambda x y) exp1) = beta y x (reducer exp1) 
-reducer lexp@(Apply exp1 exp2) = Apply (reducer exp1) (reducer exp2)
-reducer lexp@(Lambda x (Apply y z)) = eta lexp
-reducer lexp@(Lambda x exp1) = (Lambda x (reducer exp1))
+reducer lexp@(Apply (Lambda x y) exp1) = helper lexp (beta y x (reducer exp1))
+reducer lexp@(Apply exp1 exp2) = helper lexp (Apply (reducer exp1) (reducer exp2))
+reducer lexp@(Lambda x (Apply y z)) = helper lexp (eta lexp)
+reducer lexp@(Lambda x exp1) = helper lexp (Lambda x (reducer exp1))
 
 
-
-vars = ['a'..]
-
-
+helper :: Lexp -> Lexp -> Lexp
+helper exp1 exp2 = if exp1 == exp2 then exp2 else reducer exp2
 
 -- remove as filter application
 remove :: (Eq a) => a -> [a] -> [a]
@@ -47,14 +45,6 @@ freevars (Atom s)            = [s]
 freevars (Lambda v e)        = remove v (freevars e)
 freevars (Apply e1 e2)       = (freevars e1)++(freevars e2)
 
-{-
-subst :: Lexp -> String -> Lexp -> Lexp
-subst v@(Atom var1) old new = if var1 == old then new else v
-subst lexp@(Lambda var1 exp1) old new = (Lambda var1 (subst exp1 old new))
-subst lexp@(Apply exp1@(Lambda var1 exp11) exp2) old new = subst (subst exp11 var1 exp2) old new
-subst lexp@(Apply exp1 exp2) old new = (Apply (subst exp1 old new) (subst exp2 old new))
--}
-
 -- Give a lexp
 alpha :: Lexp -> [String] -> Lexp
 alpha lexp@(Atom _) list = lexp
@@ -64,22 +54,25 @@ alpha lexp@(Apply e1 e2) list = lexp
 
 beta :: Lexp -> String -> Lexp -> Lexp
 beta v@(Atom var1) old new = if var1 == old then new else v
+beta lexp@(Lambda var1 exp1) old new =
+ if var1 /= old && var1 `notElem` (freevars new)
+  then (Lambda var1 (beta exp1 old new))
+  else if var1 /= old && var1 `elem` (freevars new)
+   then beta (alpha lexp (freevars new)) old new
+   else lexp
+beta lexp@(Apply exp1@(Lambda var1 exp11) exp2) old new = beta (beta exp11 var1 exp2) old new
 beta lexp@(Apply exp1 exp2) old new = (Apply (beta exp1 old new) (beta exp2 old new))
-beta lexp@(Lambda var1 exp1) old new
- | var1 /= old && var1 `notElem` (freevars new) = (Lambda var1 (beta exp1 old new))
- | var1 /= old && var1 `elem` (freevars new) = beta (alpha lexp (freevars new)) old new
- | otherwise = lexp
-{-beta lexp@(Apply exp1@(Lambda var1 exp11) exp2) old new = beta (beta exp11 var1 exp2) old new-}
-
-
 
 getNewVar :: String -> [String] -> String
-getNewVar var boundedList = head (dropWhile (`elem` boundedList) [var ++ (show i) | i <- [1..]])
+getNewVar var boundedList = var ++ "0"
 
 eta :: Lexp -> Lexp
 eta v@(Atom _) = v
 eta lexp@(Apply _ _) = lexp 
-eta lexp1@(Lambda var lexp2@(Apply exp1 v@(Atom var2))) = if var2 == var then exp1 else lexp1
+eta lexp1@(Lambda var lexp2@(Apply exp1 v@(Atom var2))) = 
+ if var2 == var && var `notElem` (freevars exp1)
+  then exp1
+  else lexp1
 eta lexp@(Lambda _ _) = lexp
 
 -- Entry point of program
